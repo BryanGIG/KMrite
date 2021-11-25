@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">KMrite</string>
+    <string name="start_patch">Start Patch</string>
+    <string name="go_to_github_repository">Go To Github Repository</string>
+    <string name="package_name">Package Name</string>
+    <string name="lib_name">Lib Name</string>
+    <string name="hex">Hex</string>
+    <string name="offset">Offset</string>
+</resources>

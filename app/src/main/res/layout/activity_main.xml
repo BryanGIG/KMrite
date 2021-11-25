@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cardview_dark_background"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:id="@+id/sv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/console"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:padding="8dp"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
+
+        </HorizontalScrollView>
+
+    </ScrollView>
+
+    <LinearLayout
+        style="?android:buttonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/pkg"
+            android:text="@string/package_name"
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/pkg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints="@string/package_name"
+            android:inputType="text" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="?android:buttonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/libname"
+            android:text="@string/lib_name"
+            android:textColor="@color/black" />
+
+        <EditText
+            android:id="@+id/libname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints="@string/lib_name"
+            android:inputType="text" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="?android:buttonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/offset"
+                android:text="@string/offset"
+                android:textColor="@color/black" />
+
+            <EditText
+                android:id="@+id/offset"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="@string/offset"
+                android:digits="x0123456789ABCDEF"
+                android:inputType="textCapCharacters" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:labelFor="@+id/hex"
+                android:text="@string/hex"
+                android:textColor="@color/black" />
+
+            <EditText
+                android:id="@+id/hex"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autofillHints="@string/hex"
+                android:inputType="textCapCharacters" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        style="?android:buttonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/startPatcher"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_weight="1"
+            android:text="@string/start_patch" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/github"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/go_to_github_repository"
+            android:textAllCaps="false" />
+    </LinearLayout>
+</LinearLayout>
