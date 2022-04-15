@@ -3,9 +3,8 @@ package com.kmrite
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.net.Uri
 import android.os.*
-import android.util.Log
-import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -23,55 +22,52 @@ class MainActivity : AppCompatActivity(), Handler.Callback {
     private var serviceTestQueued = false
     private var conn: MSGConnection? = null
 
-    companion object {
-        const val TAG = "KMrite"
-    }
-
-    private var EditText.value
-        get() = this.text.toString()
-        set(value) {
-            this.setText(value)
-        }
-
-    private fun getRequired(): Boolean {
-        return !(bind.pkg.text.isNullOrBlank() && bind.libname.text.isNullOrBlank() && bind.offset.text.isNullOrBlank() && bind.hex.text.isNullOrBlank())
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bind = ActivityMainBinding.inflate(layoutInflater)
-        Shell.rootAccess()
         setContentView(bind.root)
 
-        bind.startPatcher.setOnClickListener {
-            if (getRequired()) {
-                if (Shell.rootAccess()) {
-                    if (remoteMessenger == null) {
-                        bind.console.append("startRootServices\n")
-                        bind.console.append("Result : ")
-                        serviceTestQueued = true
-                        val intent = Intent(this, RootServices::class.java)
-                        conn = MSGConnection()
-                        RootService.bind(intent, conn!!)
-                    }
-                    if (remoteMessenger != null) {
-                        bind.console.append("RootServiceRunning")
-                        bind.console.append("Result : ")
-                        testService()
+        val cacheShell = Shell.getCachedShell()
+        cacheShell?.let {
+            if (it.isRoot) {
+                if (remoteMessenger == null) {
+                    serviceTestQueued = true
+                    val intent = Intent(this@MainActivity, RootServices::class.java)
+                    conn = MSGConnection()
+                    RootService.bind(intent, conn!!)
+                }
+            }
+        }
+
+        with(bind) {
+            startPatcher.setOnClickListener {
+                if (getRequired()) {
+                    cacheShell?.let {
+                        if (it.isRoot) {
+                            consoleList.add("Result : ")
+                            testService()
+                        } else {
+                            consoleList.add("Result : ")
+                            consoleList.add(
+                                Tools.setCode(
+                                    pkg.text.toString(),
+                                    libname.text.toString(),
+                                    Integer.decode(offset.text.toString()),
+                                    hex.text.toString()
+                                )
+                            )
+                        }
                     }
                 } else {
-                    bind.console.append("Result : ")
-                    bind.console.append(
-                        Tools.setCode(
-                            bind.pkg.value,
-                            bind.libname.value,
-                            Integer.decode(bind.offset.value),
-                            bind.hex.value
-                        ).toString()
-                    )
+                    Toast.makeText(this@MainActivity, "fill all needed info", Toast.LENGTH_SHORT)
+                        .show()
                 }
-            } else {
-                Toast.makeText(this, "fill all needed info", Toast.LENGTH_SHORT).show()
+            }
+
+            github.setOnClickListener {
+                val intent =
+                    Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/BryanGIG/KMrite"))
+                startActivity(intent)
             }
         }
     }
@@ -82,48 +78,50 @@ class MainActivity : AppCompatActivity(), Handler.Callback {
         return false
     }
 
+    //    private fun patch()
     private fun testService() {
-        val message: Message = Message.obtain(null, RootServices.MSG_GETINFO)
-        message.data.putString("pkg", bind.pkg.value)
-        message.data.putString("fileSo", bind.libname.value)
-        message.data.putInt("offset", Integer.decode(bind.offset.value))
-        message.data.putString("hexNumber", bind.hex.value)
+        val message = Message.obtain(null, RootServices.MSG_GETINFO)
+        message.data.putString("pkg", bind.pkg.text.toString())
+        message.data.putString("fileSo", bind.libname.text.toString())
+        message.data.putInt("offset", Integer.decode(bind.offset.text.toString()))
+        message.data.putString("hexNumber", bind.hex.text.toString())
         message.replyTo = myMessenger
         try {
             remoteMessenger?.send(message)
         } catch (e: RemoteException) {
-            Log.e(TAG, "Remote error", e)
+            consoleList.add("Remote error : ${e.message}")
         }
     }
 
     inner class MSGConnection : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            Log.d(TAG, "service onServiceConnected")
+            consoleList.add("service: rootService connected")
             remoteMessenger = Messenger(service)
             if (serviceTestQueued) {
                 serviceTestQueued = false
-                testService()
             }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
-            Log.d(TAG, "service onServiceDisconnected")
+            consoleList.add("service: rootService disconnected")
             remoteMessenger = null
         }
     }
 
     inner class AppendCallbackList : CallbackList<String?>() {
         override fun onAddElement(s: String?) {
-            bind.console.append(s)
-            bind.console.append("\n")
+            bind.console.append("$s\n")
             bind.sv.postDelayed({ bind.sv.fullScroll(ScrollView.FOCUS_DOWN) }, 10)
         }
     }
 
+    private fun getRequired() =
+        !(bind.pkg.text.isNullOrBlank() && bind.libname.text.isNullOrBlank() && bind.offset.text.isNullOrBlank() && bind.hex.text.isNullOrBlank())
+
     override fun onDestroy() {
         super.onDestroy()
-        if (conn != null) {
-            RootService.unbind(conn!!)
+        conn?.let {
+            RootService.unbind(it)
         }
     }
 }

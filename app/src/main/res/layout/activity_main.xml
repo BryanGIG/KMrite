@@ -98,8 +98,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="@string/offset"
-                android:digits="x0123456789ABCDEF"
-                android:inputType="textCapCharacters" />
+                android:textAllCaps="true"
+                android:inputType="text" />
         </LinearLayout>
 
         <LinearLayout
@@ -119,7 +119,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autofillHints="@string/hex"
-                android:inputType="textCapCharacters" />
+                android:textAllCaps="true"
+                android:inputType="text" />
         </LinearLayout>
     </LinearLayout>
 
